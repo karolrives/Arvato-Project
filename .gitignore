@@ -1,6 +1,17 @@
-
-*.ipynb
-
 *.xlsx
 
 *.csv
+
+/venv/*
+
+*.pkl
+
+*/.idea/
+
+*.xml
+
+*.iml
+
+.ipynb_checkpoints/*
+
+*.pyc
