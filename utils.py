@@ -290,7 +290,7 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
     df.drop(['CAMEO_INTL_2015', 'PRAEGENDE_JUGENDJAHRE', 'LP_LEBENSPHASE_FEIN', 'EINGEFUEGT_AM'], axis=1, inplace=True)
 
     # Return the cleaned dataframe.
-    return df  # , df_high_na
+    return df, df_high_na
 
 ##################################################
 ##    UNSUPERVISED LEARNING HELPER FUNCTIONS
