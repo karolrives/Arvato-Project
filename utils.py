@@ -34,13 +34,14 @@ def create_unknown_dataset(dictionary_df):
 
     return df_unknown
 
-def create_unknown_dictionary(df_unknown):
+def create_unknown_dictionary(dictionary_df):
     '''
     Creates a dictionary containing unknown codes for each column in the azdias dataset
 
     :param df_unknown: Clean dataframe of unknown codes
     :return: unknown_dict: Dictionary containing unknown codes
     '''
+    df_unknown = create_unknown_dataset(dictionary_df)
     unknown_dict = dict()
 
     for attribute, unknown_value in zip(df_unknown.Attribute, df_unknown.Value):
@@ -155,7 +156,34 @@ def split_cameo(value, wealth):
 
 # type(cameo_values)
 
-def clean_azdias(df, unknown_dict, outlier_columns, cat_col, mainstream, decade):
+def obtain_categorical_columns(df):
+    '''
+    Obtains a dictionary with the categorical columns grouped by multi and binary
+    :param df: azdias dataframe
+    :return: cat_col: dictionary containing columns names
+    '''
+    feature_info = pd.read_csv('feature_info.csv')
+    categorical_cols = feature_info.Feature[feature_info.Type == 'Categorical']
+
+    cat_col = dict()
+    for col in categorical_cols:
+        try:
+            if (df[col].nunique() > 2):
+                cat_col.setdefault('multi', [])
+                cat_col['multi'].append(col)
+            else:
+                cat_col.setdefault('binary', [])
+                cat_col['binary'].append(col)
+        except:
+            pass
+
+    # updating the cat_col list, removing the CAMEO_DEU_2015 from the dictionary
+    cat_col['multi'].remove('CAMEO_DEU_2015')
+
+    return cat_col
+
+
+def clean_azdias(df, unknown_dict, outlier_columns, cat_col):
     """
     Perform feature trimming, re-encoding, and engineering for demographics
     data
@@ -164,7 +192,9 @@ def clean_azdias(df, unknown_dict, outlier_columns, cat_col, mainstream, decade)
     OUTPUT: Trimmed and cleaned demographics DataFrame
     """
 
-    # Put in code here to execute all main cleaning steps:
+    mainstream = (1, 3, 5, 8, 10, 12, 14)
+    decade = {1: 40, 2: 40, 3: 50, 4: 50, 5: 60, 6: 60, 7: 60, 8: 70, 9: 70, 10: 80, 11: 80, 12: 80, 13: 80, 14: 90,
+              15: 90}
     # convert missing value codes into NaNs, ...
     replace_unknown_values(df, unknown_dict)
 
@@ -210,14 +240,16 @@ def clean_azdias(df, unknown_dict, outlier_columns, cat_col, mainstream, decade)
     return df, df_high_na
 
 
-def clean_mailout(df, unknown_dict, outlier_columns, cat_col, mainstream, decade):
+def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
     """
     Perform feature trimming, re-encoding, and engineering for mailout data
 
     :param  df -   Mailout dataframe
     :return df - Trimmed and cleaned Mailout DataFrame
     """
-
+    mainstream = (1, 3, 5, 8, 10, 12, 14)
+    decade = {1: 40, 2: 40, 3: 50, 4: 50, 5: 60, 6: 60, 7: 60, 8: 70, 9: 70, 10: 80, 11: 80, 12: 80, 13: 80, 14: 90,
+              15: 90}
     # convert missing value codes into NaNs, ...
     replace_unknown_values(df, unknown_dict)
 
@@ -227,9 +259,9 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col, mainstream, decade
     except:
         pass
 
-    # df, df_high_na = remove_nas_rows(df)
+    df, df_high_na = remove_nas_rows(df)
 
-    # Manually replacing missign values for CAMEO_DEU, CAMEO_DEUG and CAMEO_INTL
+    # Manually replacing missing values for CAMEO_DEU, CAMEO_DEUG and CAMEO_INTL
     df.loc[df['CAMEO_DEU_2015'] == 'XX', 'CAMEO_DEU_2015'] = np.nan
     df.loc[df['CAMEO_DEUG_2015'] == 'X', 'CAMEO_DEUG_2015'] = np.nan
     df.loc[:, 'CAMEO_DEUG_2015'] = df.loc[:, 'CAMEO_DEUG_2015'].astype('float')
