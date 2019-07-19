@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import pickle
 
 from sklearn.decomposition import PCA
 
@@ -388,3 +389,15 @@ def plot_component(full_dataset, pca, n_components, color='purple'):
     comp_merged.plot(kind='bar', color=color, title=dimensions[n_components-1])
 
 #comp_end = components.sort_values(ascending=True)[:10]
+
+def save_model(model, prefix):
+    '''
+    Saves the model in the current working directory
+
+    :param model: model to save
+    :param prefix: (string) prefix of the name of the pkl file
+    :return: None
+    '''
+    file = open(prefix + '_model.pkl', 'wb')
+    pickle.dump(model, file)
+    print(prefix +'_model.pkl saved')
