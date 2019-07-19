@@ -216,7 +216,7 @@ def clean_azdias(df, unknown_dict, outlier_columns, cat_col):
 
     # select, re-encode, and engineer column values.
     df['OST_WEST_KZ'].replace(['W', 'O'], [1, 0], inplace=True)
-    df.drop('CAMEO_DEU_2015', axis=1, inplace=True)
+    df.drop(columns =['CAMEO_DEU_2015', 'LNR'], axis=1, inplace=True)
     df = pd.get_dummies(df, columns=cat_col['multi'])
 
     col_move = np.where(df['PRAEGENDE_JUGENDJAHRE'].isin(mainstream), 0,
@@ -271,7 +271,7 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
 
     # select, re-encode, and engineer column values.
     df['OST_WEST_KZ'].replace(['W', 'O'], [1, 0], inplace=True)
-    df.drop('CAMEO_DEU_2015', axis=1, inplace=True)
+    df.drop(columns = ['CAMEO_DEU_2015', 'D19_LETZTER_KAUF_BRANCHE'], axis=1, inplace=True)
     df = pd.get_dummies(df, columns=cat_col['multi'])
 
     col_move = np.where(df['PRAEGENDE_JUGENDJAHRE'].isin(mainstream), 0,
