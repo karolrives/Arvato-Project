@@ -209,10 +209,10 @@ def clean_azdias(df, unknown_dict, outlier_columns, cat_col):
 
     # Manually replacing missign values for CAMEO_DEU, CAMEO_DEUG and CAMEO_INTL
     df.loc[df['CAMEO_DEU_2015'] == 'XX', 'CAMEO_DEU_2015'] = np.nan
-    # df.loc[df['CAMEO_DEUG_2015'] == 'X', 'CAMEO_DEUG_2015'] = np.nan
-    # df.loc[:, 'CAMEO_DEUG_2015'] = df.loc[:, 'CAMEO_DEUG_2015'].astype('float')
-    # df.loc[df['CAMEO_INTL_2015'] == 'XX', 'CAMEO_INTL_2015'] = np.nan
-    # df.loc[:, 'CAMEO_INTL_2015'] = df.loc[:, 'CAMEO_INTL_2015'].astype('float')
+    df.loc[df['CAMEO_DEUG_2015'] == 'X', 'CAMEO_DEUG_2015'] = np.nan
+    df.loc[:, 'CAMEO_DEUG_2015'] = df.loc[:, 'CAMEO_DEUG_2015'].astype('float')
+    df.loc[df['CAMEO_INTL_2015'] == 'XX', 'CAMEO_INTL_2015'] = np.nan
+    df.loc[:, 'CAMEO_INTL_2015'] = df.loc[:, 'CAMEO_INTL_2015'].astype('float')
 
     # select, re-encode, and engineer column values.
     df['OST_WEST_KZ'].replace(['W', 'O'], [1, 0], inplace=True)
@@ -271,7 +271,7 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
 
     # select, re-encode, and engineer column values.
     df['OST_WEST_KZ'].replace(['W', 'O'], [1, 0], inplace=True)
-    df.drop(columns = ['CAMEO_DEU_2015', 'D19_LETZTER_KAUF_BRANCHE'], axis=1, inplace=True)
+    df.drop(columns = ['CAMEO_DEU_2015'], axis=1, inplace=True)
     df = pd.get_dummies(df, columns=cat_col['multi'])
 
     col_move = np.where(df['PRAEGENDE_JUGENDJAHRE'].isin(mainstream), 0,
@@ -288,7 +288,8 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
 
     # Finally we drop the original columns
 
-    df.drop(['CAMEO_INTL_2015', 'PRAEGENDE_JUGENDJAHRE', 'LP_LEBENSPHASE_FEIN', 'EINGEFUEGT_AM'], axis=1, inplace=True)
+    df.drop(['LNR','CAMEO_INTL_2015', 'PRAEGENDE_JUGENDJAHRE', 'LP_LEBENSPHASE_FEIN', 'EINGEFUEGT_AM'], axis=1, inplace=True)
+    #print(df.D19_LETZTER_KAUF_BRANCHE.value_counts())
 
     # Return the cleaned dataframe.
     return df, df_high_na
