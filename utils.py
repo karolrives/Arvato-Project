@@ -242,13 +242,15 @@ def clean_azdias(df, unknown_dict, outlier_columns, cat_col):
     return df, df_high_na
 
 
-def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
+def clean_mailout(df, unknown_dict, outlier_columns, cat_col, train=True):
     """
     Perform feature trimming, re-encoding, and engineering for mailout data
 
     :param  df -   Mailout dataframe
     :return df - Trimmed and cleaned Mailout DataFrame
+    :return LNR - person id
     """
+
     mainstream = (1, 3, 5, 8, 10, 12, 14)
     decade = {1: 40, 2: 40, 3: 50, 4: 50, 5: 60, 6: 60, 7: 60, 8: 70, 9: 70, 10: 80, 11: 80, 12: 80, 13: 80, 14: 90,
               15: 90}
@@ -261,7 +263,9 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
     except:
         pass
 
-    df, df_high_na = remove_nas_rows(df)
+    if train:
+        df, df_high_na = remove_nas_rows(df)
+
 
     # Manually replacing missing values for CAMEO_DEU, CAMEO_DEUG and CAMEO_INTL
     df.loc[df['CAMEO_DEU_2015'] == 'XX', 'CAMEO_DEU_2015'] = np.nan
@@ -288,12 +292,12 @@ def clean_mailout(df, unknown_dict, outlier_columns, cat_col):
     df['EINGEFUEGT_AM_YEAR'] = df['EINGEFUEGT_AM'].str[:4].astype(float)
 
     # Finally we drop the original columns
-
+    LNR = df.LNR
     df.drop(['LNR','CAMEO_INTL_2015', 'PRAEGENDE_JUGENDJAHRE', 'LP_LEBENSPHASE_FEIN', 'EINGEFUEGT_AM'], axis=1, inplace=True)
     #print(df.D19_LETZTER_KAUF_BRANCHE.value_counts())
 
     # Return the cleaned dataframe.
-    return df, df_high_na
+    return df, LNR
 
 ##################################################
 ##    UNSUPERVISED LEARNING HELPER FUNCTIONS
