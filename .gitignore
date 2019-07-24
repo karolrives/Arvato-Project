@@ -15,3 +15,5 @@
 .ipynb_checkpoints/*
 
 *.pyc
+
+*.rtf
